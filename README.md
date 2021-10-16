@@ -8,4 +8,4 @@ I built a simulation where I set up the environment to match up the game variabl
 
 Thankfully we succeeded, and the following plot compares the Monte Carlo simulation results to the calculated results. 
 
-![](plot.png)
+![](main_plot.png)
