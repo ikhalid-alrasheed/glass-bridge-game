@@ -12,6 +12,7 @@ def plot_prob(mc:array, prob:list, i:int, save:bool=False) -> None:
     X_axis = arange(len(mc))
 
     plt.figure(figsize=(12, 8))
+    plt.grid(True, "major", axis="y", linestyle='-', linewidth=0.5, alpha=0.5, color="black")
     plt.bar(X_axis - 0.2, mc, 0.4, label='Monte Carlo')
     plt.bar(X_axis + 0.2, prob, 0.4, label='Probability')
 
@@ -19,7 +20,7 @@ def plot_prob(mc:array, prob:list, i:int, save:bool=False) -> None:
 
     plt.xlabel("Player Order")
     plt.ylabel("Probability")
-    plt.title(f"Probability of Passing {i}-steps Bridge \n for each Player Order")
+    plt.title(f"Probability of Crossing {i}-steps Bridge \n for each Player's Order")
     plt.legend()
     plt.show()
     if save:
