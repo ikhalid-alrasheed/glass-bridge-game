@@ -1,28 +1,80 @@
 import matplotlib.pyplot as plt
-from numpy import array, arange
+import matplotlib.animation as animation
 
-def plot_prob(mc:array, prob:list, i:int, save:bool=False) -> None:
-    """
+from numpy import ndarray, arange, log10, logspace
 
-    :param mc:
-    :param prob:
-    :return:
-    """
-    order = ["st", "nd", "rd"] + (["th"] * (len(mc) - 3))
-    X_axis = arange(len(mc))
+class PlotTheSimulation():
 
-    plt.figure(figsize=(12, 8))
-    plt.grid(True, "major", axis="y", linestyle='-', linewidth=0.5, alpha=0.5, color="black")
-    plt.bar(X_axis - 0.2, mc, 0.4, label='Monte Carlo')
-    plt.bar(X_axis + 0.2, prob, 0.4, label='Probability')
+    def __init__(self, mc:ndarray, prob:list, n_steps:int, figsize:(int, int) = (9, 6)):
+        """
 
-    plt.xticks(X_axis, [str(i)+order[i-1] for i in range(1, 1+len(mc))])
+        :param mc:
+        :param prob:
+        :param n_steps:
+        :param figsize:
+        """
 
-    plt.xlabel("Player Order")
-    plt.ylabel("Probability")
-    plt.title(f"Probability of Crossing {i}-steps Bridge \n for each Player's Order")
-    plt.legend()
-    plt.show()
-    if save:
-        plt.savefig(fname="plot.png")
+        self.mc = mc
+        self.prob = prob
 
+        self.n_steps = n_steps
+        self.n_player = self.mc.shape[1]
+
+        self.fig, self.ax = plt.subplots(figsize=figsize)
+        self.X_axis = arange(self.n_player)
+
+
+    def setFiguer(self):
+        """
+
+        :return:
+        """
+        order = ["st", "nd", "rd"] + (["th"] * (self.n_player - 3))
+
+        self.ax.grid(True, "major", axis="y", linestyle='-', linewidth=0.5, alpha=0.5, color="black")
+
+        self.ax.set_xticks(self.X_axis)
+        self.ax.set_xticklabels([str(i) + order[i - 1] for i in range(1, 1 + self.n_player)])
+
+        self.ax.set_title(f"Probability of Crossing {self.n_steps}-steps Bridge \n for each Player's Order")
+        self.ax.set_xlabel("Player Order")
+        self.ax.set_ylabel("Probability")
+
+
+
+    def plotFinalProb(self, i:int=-1):
+        """
+
+        :param i:
+        :return:
+        """
+        self.ax.clear()
+        self.setFiguer()
+        self.ax.bar(self.X_axis - 0.2, self.mc[i], 0.4, label='Monte Carlo Probability')
+        self.ax.bar(self.X_axis + 0.2, self.prob, 0.4, label='Calculated Probability')
+        self.ax.text(0.2, 0.63, f"Iterration #{i}")
+        self.ax.legend()
+
+    def showPlot(self):
+        self.plotFinalProb()
+
+        self.fig.show()
+
+    def savePlot(self):
+        """
+
+        :return:
+        """
+        self.plotFinalProb()
+        self.fig.savefig(fname="plot.png")
+
+    def saveAnimatedPlot(self, n_itter:int):
+        """
+
+        :param n_itter:
+        :return:
+        """
+        itters = logspace(0, log10(n_itter-1), num=1000).astype(int)
+        anim = animation.FuncAnimation(self.fig, self.plotFinalProb, frames = itters , interval=40 )
+
+        anim.save(r'Animation.gif')
